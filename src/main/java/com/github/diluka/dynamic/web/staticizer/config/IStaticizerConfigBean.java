@@ -16,15 +16,31 @@
 package com.github.diluka.dynamic.web.staticizer.config;
 
 /**
+ * 配置Bean接口
  *
  * @author Diluka
  */
 public interface IStaticizerConfigBean {
 
+    /**
+     * URI正则表达式
+     *
+     * @return
+     */
     String getURIPattern();
 
+    /**
+     * 唯一参数名称
+     *
+     * @return
+     */
     String getParameterName();
 
+    /**
+     * 静态文件存放相对路径
+     *
+     * @return
+     */
     String getStaticPageDirectory();
 
 }

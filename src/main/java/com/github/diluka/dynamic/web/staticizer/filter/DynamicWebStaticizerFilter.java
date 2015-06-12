@@ -41,6 +41,9 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import org.apache.commons.io.output.TeeOutputStream;
 
 /**
+ * 动态网页静态化器
+ *
+ * 第一次请求一个动态页面时，会将其保存为html文件，之后请求不再动态生成
  *
  * @author Diluka
  */

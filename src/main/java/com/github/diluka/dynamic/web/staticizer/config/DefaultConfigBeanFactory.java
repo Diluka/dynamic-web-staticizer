@@ -24,6 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * 默认配置Bean工厂，从属性文件加载配置
  *
  * @author Diluka
  */

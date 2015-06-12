@@ -16,6 +16,7 @@
 package com.github.diluka.dynamic.web.staticizer.config;
 
 /**
+ * 默认配置Bean
  *
  * @author Diluka
  */
@@ -33,7 +34,6 @@ public class DefaultConfigBean implements IStaticizerConfigBean {
         this.parameterName = param;
         this.staticPageDirectory = dir;
     }
-
 
     @Override
     public String getURIPattern() {
