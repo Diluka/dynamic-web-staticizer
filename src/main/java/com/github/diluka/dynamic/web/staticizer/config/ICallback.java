@@ -15,39 +15,14 @@
  */
 package com.github.diluka.dynamic.web.staticizer.config;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
- * 配置Bean接口
+ * 回调接口
  *
  * @author Diluka
  */
-public interface IStaticizerConfigBean {
+public interface ICallback {
 
-    /**
-     * URI正则表达式
-     *
-     * @return
-     */
-    String getURIPattern();
-
-    /**
-     * 唯一参数名称
-     *
-     * @return
-     */
-    String getParameterName();
-
-    /**
-     * 静态文件存放相对路径
-     *
-     * @return
-     */
-    String getStaticPageDirectory();
-
-    /**
-     * 静态化标记，GET参数中有这个标记才处理
-     *
-     * @return
-     */
-    String getStaticFlag();
-
+    void call(IStaticizerConfigBean config, HttpServletRequest request);
 }

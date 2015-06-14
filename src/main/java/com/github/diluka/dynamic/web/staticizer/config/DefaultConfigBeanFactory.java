@@ -37,6 +37,7 @@ public class DefaultConfigBeanFactory {
     public static final String MATCHER = "matcher";
     public static final String PARAMETER = "parameter";
     public static final String DIRECTORY = "directory";
+    public static final String FLAG = "flag";
     public static final String HOST = "host";
     public static final String PORT = "port";
 
@@ -65,14 +66,16 @@ public class DefaultConfigBeanFactory {
                     list.add(new DefaultConfigBean(
                             prop.getProperty(MATCHER + i),
                             prop.getProperty(PARAMETER + i),
-                            prop.getProperty(DIRECTORY + i)
+                            prop.getProperty(DIRECTORY + i),
+                            prop.getProperty(FLAG + i)
                     ));
                 }
             } else {
                 list.add(new DefaultConfigBean(
                         prop.getProperty(MATCHER),
                         prop.getProperty(PARAMETER),
-                        prop.getProperty(DIRECTORY)
+                        prop.getProperty(DIRECTORY),
+                        prop.getProperty(FLAG)
                 ));
             }
 

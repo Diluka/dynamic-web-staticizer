@@ -25,14 +25,16 @@ public class DefaultConfigBean implements IStaticizerConfigBean {
     private String URIPattern;
     private String parameterName;
     private String staticPageDirectory;
+    private String staticFlag;
 
-    DefaultConfigBean() {
+    public DefaultConfigBean() {
     }
 
-    DefaultConfigBean(String matcher, String param, String dir) {
+    public DefaultConfigBean(String matcher, String param, String dir, String flag) {
         this.URIPattern = matcher;
         this.parameterName = param;
         this.staticPageDirectory = dir;
+        this.staticFlag = flag;
     }
 
     @Override
@@ -60,6 +62,15 @@ public class DefaultConfigBean implements IStaticizerConfigBean {
 
     public void setStaticPageDirectory(String staticPageDirectory) {
         this.staticPageDirectory = staticPageDirectory;
+    }
+
+    @Override
+    public String getStaticFlag() {
+        return staticFlag;
+    }
+
+    public void setStaticFlag(String staticFlag) {
+        this.staticFlag = staticFlag;
     }
 
 }

@@ -16,6 +16,7 @@
 package com.github.diluka.dynamic.web.staticizer.filter;
 
 import com.github.diluka.dynamic.web.staticizer.config.DefaultConfigBeanFactory;
+import com.github.diluka.dynamic.web.staticizer.config.ICallback;
 import com.github.diluka.dynamic.web.staticizer.config.IStaticizerConfigBean;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -51,6 +52,8 @@ public class DynamicWebStaticizerFilter implements Filter {
 
     private List<IStaticizerConfigBean> configs = new ArrayList<IStaticizerConfigBean>();
 
+    private final List<ICallback> callbacks = new ArrayList<ICallback>();
+
     private DefaultConfigBeanFactory defaultConfigBeanFactory;
 
     @Override
@@ -69,7 +72,7 @@ public class DynamicWebStaticizerFilter implements Filter {
                 HttpServletRequest req = (HttpServletRequest) request;
                 CacheHttpServletResponseWrapper chsrw = new CacheHttpServletResponseWrapper((HttpServletResponse) response);
 
-                if (Pattern.compile(config.getURIPattern()).matcher(req.getRequestURI()).find()) {
+                if (request.getParameter(config.getStaticFlag()) != null && Pattern.compile(config.getURIPattern()).matcher(req.getRequestURI()).find()) {
                     File html = prepareStaticPage(config, req);
                     if (html != null) {
                         BufferedReader reader = new BufferedReader(new FileReader(html));
@@ -108,6 +111,10 @@ public class DynamicWebStaticizerFilter implements Filter {
         fos.write(response.outputStream.toByteArray());
 
         fos.close();
+
+        for (ICallback callback : callbacks) {
+            callback.call(config, request);
+        }
     }
 
     private File prepareStaticPage(IStaticizerConfigBean config, HttpServletRequest request) throws IOException {
@@ -182,6 +189,14 @@ public class DynamicWebStaticizerFilter implements Filter {
 
     public void addConfig(IStaticizerConfigBean bean) {
         configs.add(bean);
+    }
+
+    public void addCallback(ICallback callback) {
+        callbacks.add(callback);
+    }
+
+    public void removeCallback(ICallback callback) {
+        callbacks.remove(callback);
     }
 
     public void setDefaultConfigBeanFactory(DefaultConfigBeanFactory defaultConfigBeanFactory) {
