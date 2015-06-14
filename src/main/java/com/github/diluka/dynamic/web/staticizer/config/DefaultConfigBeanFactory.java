@@ -79,7 +79,7 @@ public class DefaultConfigBeanFactory {
                 ));
             }
 
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(DefaultConfigBeanFactory.class.getName()).log(Level.FINEST, "properties file not found", ex);
             Logger.getLogger(DefaultConfigBeanFactory.class.getName()).log(Level.INFO, "properties file not found");
         }
