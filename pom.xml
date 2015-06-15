@@ -3,8 +3,16 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.diluka</groupId>
     <artifactId>dynamic-web-staticizer</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
+    
+    <developers>
+        <developer>
+            <name>Diluka W</name>
+            <email>diluka42@gmail.com</email>
+            <url>https://github.com/Diluka/dynamic-web-staticizer</url>
+        </developer>
+    </developers>
     
     <dependencies>
         <dependency>
