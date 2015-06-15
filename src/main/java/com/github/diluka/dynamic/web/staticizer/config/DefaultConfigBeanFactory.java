@@ -15,11 +15,12 @@
  */
 package com.github.diluka.dynamic.web.staticizer.config;
 
-import java.io.IOException;
+import com.google.gson.Gson;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,16 +31,16 @@ import java.util.logging.Logger;
  */
 public class DefaultConfigBeanFactory {
 
-    public String configFileLocation = "/staticizer-config.properties";
+    public String configFileLocation = "/staticizer-config.json";
 
-    public static final String COUNT = "count";
-
-    public static final String MATCHER = "matcher";
-    public static final String PARAMETER = "parameter";
-    public static final String DIRECTORY = "directory";
-    public static final String FLAG = "flag";
-    public static final String HOST = "host";
-    public static final String PORT = "port";
+//    public static final String COUNT = "count";
+//
+//    public static final String MATCHER = "matcher";
+//    public static final String PARAMETER = "parameter";
+//    public static final String DIRECTORY = "directory";
+//    public static final String FLAG = "flag";
+//    public static final String HOST = "host";
+//    public static final String PORT = "port";
 
     public DefaultConfigBeanFactory() {
     }
@@ -56,28 +57,12 @@ public class DefaultConfigBeanFactory {
         List<IStaticizerConfigBean> list = new ArrayList<IStaticizerConfigBean>();
         try {
             InputStream is = DefaultConfigBeanFactory.class.getResourceAsStream(configFileLocation);
-            Properties prop = new Properties();
-            prop.load(is);
+            InputStreamReader reader = new InputStreamReader(is);
+            Gson gson = new Gson();
 
-            int count = Integer.parseInt(prop.getProperty(COUNT, "0"));
+            DefaultConfigBean[] beans = gson.fromJson(reader, DefaultConfigBean[].class);
 
-            if (count > 0) {
-                for (int i = 1; i <= count; i++) {
-                    list.add(new DefaultConfigBean(
-                            prop.getProperty(MATCHER + i),
-                            prop.getProperty(PARAMETER + i),
-                            prop.getProperty(DIRECTORY + i),
-                            prop.getProperty(FLAG + i)
-                    ));
-                }
-            } else {
-                list.add(new DefaultConfigBean(
-                        prop.getProperty(MATCHER),
-                        prop.getProperty(PARAMETER),
-                        prop.getProperty(DIRECTORY),
-                        prop.getProperty(FLAG)
-                ));
-            }
+            list.addAll(Arrays.asList(beans));
 
         } catch (Exception ex) {
             Logger.getLogger(DefaultConfigBeanFactory.class.getName()).log(Level.FINEST, "properties file not found", ex);

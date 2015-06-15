@@ -20,21 +20,16 @@ import com.github.diluka.dynamic.web.staticizer.config.ICallback;
 import com.github.diluka.dynamic.web.staticizer.config.IStaticizerConfigBean;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Writer;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -235,5 +230,11 @@ public class DynamicWebStaticizerFilter implements Filter {
     public void removeCallback(ICallback callback) {
         callbacks.remove(callback);
     }
+
+    public void setDefaultConfigBeanFactory(DefaultConfigBeanFactory defaultConfigBeanFactory) {
+        this.defaultConfigBeanFactory = defaultConfigBeanFactory;
+    }
+    
+    
 
 }
