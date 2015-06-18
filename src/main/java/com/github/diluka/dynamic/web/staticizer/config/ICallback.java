@@ -24,5 +24,5 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface ICallback {
 
-    void call(IStaticizerConfigBean config, HttpServletRequest request);
+    void call(IStaticizerConfig config, HttpServletRequest request);
 }

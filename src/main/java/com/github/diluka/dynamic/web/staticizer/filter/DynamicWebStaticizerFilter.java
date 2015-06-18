@@ -15,78 +15,56 @@
  */
 package com.github.diluka.dynamic.web.staticizer.filter;
 
-import com.github.diluka.dynamic.web.staticizer.config.DefaultConfigBeanFactory;
-import com.github.diluka.dynamic.web.staticizer.config.ICallback;
-import com.github.diluka.dynamic.web.staticizer.config.IStaticizerConfigBean;
+import com.github.diluka.dynamic.web.staticizer.config.*;
+import org.apache.commons.io.output.TeeOutputStream;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-
-import org.apache.commons.io.output.TeeOutputStream;
 
 /**
  * 动态网页静态化器
- * <p/>
+ * <p>
  * 第一次请求一个动态页面时，会将其保存为html文件，之后请求不再动态生成
  *
  * @author Diluka
  */
 public class DynamicWebStaticizerFilter implements Filter {
 
-    private List<IStaticizerConfigBean> configs = new ArrayList<IStaticizerConfigBean>();
+    private List<IStaticizeDecider> deciders = new ArrayList<IStaticizeDecider>();
 
     private final List<ICallback> callbacks = new ArrayList<ICallback>();
 
-    private DefaultConfigBeanFactory defaultConfigBeanFactory;
+    private DefaultConfigDeciderFactory defaultConfigDeciderFactory;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        if (defaultConfigBeanFactory == null) {
-            defaultConfigBeanFactory = new DefaultConfigBeanFactory();
+        if (defaultConfigDeciderFactory == null) {
+            defaultConfigDeciderFactory = new DefaultConfigDeciderFactory();
         }
 
-        configs.addAll(defaultConfigBeanFactory.getDefaultConfigBeans());
+        deciders.addAll(defaultConfigDeciderFactory.getDefaultDeciders());
 
         Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Staticizer Initialized. ");
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        for (IStaticizerConfigBean config : configs) {
+        for (IStaticizeDecider decider : deciders) {
             if (request instanceof HttpServletRequest) {
 
                 HttpServletRequest req = (HttpServletRequest) request;
                 CacheHttpServletResponseWrapper chsrw = new CacheHttpServletResponseWrapper((HttpServletResponse) response);
 
-                if (request.getParameter(config.getStaticFlag()) != null
-                        && Pattern.compile(config.getURIPattern()).matcher(
-                        req.getRequestURI().replaceFirst(req.getContextPath(), "")).find()) {
+                if (decider.decide(req)) {
 
-                    File html = prepareStaticPage(config, req);
+                    File html = prepareStaticPage(decider, req);
                     if (html != null) {
                         response.setCharacterEncoding("utf-8");
                         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(html), "utf-8"));
@@ -100,7 +78,7 @@ public class DynamicWebStaticizerFilter implements Filter {
                         return;
                     } else {
                         chain.doFilter(request, chsrw);
-                        saveHtmlFile(config, req, chsrw);
+                        saveHtmlFile(decider, req, chsrw);
                         return;
                     }
 
@@ -112,8 +90,8 @@ public class DynamicWebStaticizerFilter implements Filter {
 
     }
 
-    private void saveHtmlFile(IStaticizerConfigBean config, HttpServletRequest request, CacheHttpServletResponseWrapper response) throws FileNotFoundException, IOException {
-        String filename = request.getParameter(config.getParameterName()) + ".html";
+    private void saveHtmlFile(IStaticizerConfig config, HttpServletRequest request, CacheHttpServletResponseWrapper response) throws FileNotFoundException, IOException {
+        String filename = config.getFilename(request);
         File dir = getDir(config, request);
         if (!dir.exists()) {
             dir.mkdirs();
@@ -131,8 +109,8 @@ public class DynamicWebStaticizerFilter implements Filter {
         }
     }
 
-    private File prepareStaticPage(IStaticizerConfigBean config, HttpServletRequest request) throws IOException {
-        String filename = request.getParameter(config.getParameterName()) + ".html";
+    private File prepareStaticPage(IStaticizerConfig config, HttpServletRequest request) throws IOException {
+        String filename = config.getFilename(request);
         File dir = getDir(config, request);
         if (!dir.exists()) {
             dir.mkdirs();
@@ -147,7 +125,7 @@ public class DynamicWebStaticizerFilter implements Filter {
         }
     }
 
-    private File getDir(IStaticizerConfigBean config, HttpServletRequest request) {
+    private File getDir(IStaticizerConfig config, HttpServletRequest request) {
         String dir = config.getStaticPageDirectory();
         if (dir.contains(":")) {
             return new File(dir);
@@ -158,7 +136,7 @@ public class DynamicWebStaticizerFilter implements Filter {
 
     @Override
     public void destroy() {
-        configs = null;
+        deciders = null;
     }
 
     static class TeeServletOutputStream extends ServletOutputStream {
@@ -211,16 +189,20 @@ public class DynamicWebStaticizerFilter implements Filter {
 
     }
 
-    public void setConfigs(List<IStaticizerConfigBean> configs) {
-        this.configs = configs;
+    public List<IStaticizeDecider> getDeciders() {
+        return deciders;
     }
 
-    public List<IStaticizerConfigBean> getConfigs() {
-        return configs;
+    public void setDeciders(List<IStaticizeDecider> deciders) {
+        this.deciders = deciders;
     }
 
-    public void addConfig(IStaticizerConfigBean bean) {
-        configs.add(bean);
+    public void addDecider(IStaticizeDecider decider) {
+        deciders.add(decider);
+    }
+
+    public void addConfig(IStaticizerConfig bean) {
+        deciders.add(new DefaultConfigDecider(bean));
     }
 
     public void addCallback(ICallback callback) {
@@ -231,10 +213,5 @@ public class DynamicWebStaticizerFilter implements Filter {
         callbacks.remove(callback);
     }
 
-    public void setDefaultConfigBeanFactory(DefaultConfigBeanFactory defaultConfigBeanFactory) {
-        this.defaultConfigBeanFactory = defaultConfigBeanFactory;
-    }
-    
-    
 
 }

@@ -29,7 +29,8 @@ import java.util.logging.Logger;
  *
  * @author Diluka
  */
-public class DefaultConfigBeanFactory {
+@Deprecated
+public class DefaultConfigFactory {
 
     public String configFileLocation = "/staticizer-config.json";
 
@@ -42,10 +43,10 @@ public class DefaultConfigBeanFactory {
 //    public static final String HOST = "host";
 //    public static final String PORT = "port";
 
-    public DefaultConfigBeanFactory() {
+    public DefaultConfigFactory() {
     }
 
-    public DefaultConfigBeanFactory(String configFileLocation) {
+    public DefaultConfigFactory(String configFileLocation) {
         this.configFileLocation = configFileLocation;
     }
 
@@ -53,20 +54,20 @@ public class DefaultConfigBeanFactory {
         this.configFileLocation = configFileLocation;
     }
 
-    public List<IStaticizerConfigBean> getDefaultConfigBeans() {
-        List<IStaticizerConfigBean> list = new ArrayList<IStaticizerConfigBean>();
+    public List<IStaticizerConfig> getDefaultConfigBeans() {
+        List<IStaticizerConfig> list = new ArrayList<IStaticizerConfig>();
         try {
-            InputStream is = DefaultConfigBeanFactory.class.getResourceAsStream(configFileLocation);
+            InputStream is = DefaultConfigFactory.class.getResourceAsStream(configFileLocation);
             InputStreamReader reader = new InputStreamReader(is);
             Gson gson = new Gson();
 
-            DefaultConfigBean[] beans = gson.fromJson(reader, DefaultConfigBean[].class);
+            DefaultConfig[] beans = gson.fromJson(reader, DefaultConfig[].class);
 
             list.addAll(Arrays.asList(beans));
 
         } catch (Exception ex) {
-            Logger.getLogger(DefaultConfigBeanFactory.class.getName()).log(Level.FINEST, "properties file not found", ex);
-            Logger.getLogger(DefaultConfigBeanFactory.class.getName()).log(Level.INFO, "properties file not found");
+            Logger.getLogger(DefaultConfigFactory.class.getName()).log(Level.FINEST, "properties file not found", ex);
+            Logger.getLogger(DefaultConfigFactory.class.getName()).log(Level.INFO, "properties file not found");
         }
         return list;
     }

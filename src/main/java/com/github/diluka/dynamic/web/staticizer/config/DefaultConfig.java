@@ -15,22 +15,24 @@
  */
 package com.github.diluka.dynamic.web.staticizer.config;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 默认配置Bean
  *
  * @author Diluka
  */
-public class DefaultConfigBean implements IStaticizerConfigBean {
+public class DefaultConfig implements IStaticizerConfig {
 
     private String URIPattern;
     private String parameterName;
     private String staticPageDirectory;
     private String staticFlag;
 
-    public DefaultConfigBean() {
+    public DefaultConfig() {
     }
 
-    public DefaultConfigBean(String matcher, String param, String dir, String flag) {
+    public DefaultConfig(String matcher, String param, String dir, String flag) {
         this.URIPattern = matcher;
         this.parameterName = param;
         this.staticPageDirectory = dir;
@@ -67,6 +69,11 @@ public class DefaultConfigBean implements IStaticizerConfigBean {
     @Override
     public String getStaticFlag() {
         return staticFlag;
+    }
+
+    @Override
+    public String getFilename(HttpServletRequest request) {
+        return request.getParameter(getParameterName()) + ".html";
     }
 
     public void setStaticFlag(String staticFlag) {

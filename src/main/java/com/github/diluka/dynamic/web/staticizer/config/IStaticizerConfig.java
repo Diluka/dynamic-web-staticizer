@@ -15,12 +15,14 @@
  */
 package com.github.diluka.dynamic.web.staticizer.config;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 配置Bean接口
  *
  * @author Diluka
  */
-public interface IStaticizerConfigBean {
+public interface IStaticizerConfig {
 
     /**
      * URI正则表达式
@@ -49,5 +51,12 @@ public interface IStaticizerConfigBean {
      * @return
      */
     String getStaticFlag();
+
+    /**
+     * 通过请求获取文件名
+     * @param request
+     * @return
+     */
+    String getFilename(HttpServletRequest request);
 
 }
