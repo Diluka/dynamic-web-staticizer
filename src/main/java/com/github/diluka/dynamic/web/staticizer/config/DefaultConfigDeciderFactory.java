@@ -10,6 +10,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * 默认Decider工厂，效果和以前一样
+ *
+ * @author Diluka
+ */
 public class DefaultConfigDeciderFactory {
     public String configFileLocation = "/staticizer-config.json";
 
@@ -17,7 +22,7 @@ public class DefaultConfigDeciderFactory {
 
         List<IStaticizeDecider> list = new ArrayList<IStaticizeDecider>();
         try {
-            InputStream is = DefaultConfigFactory.class.getResourceAsStream(configFileLocation);
+            InputStream is = DefaultConfigDeciderFactory.class.getResourceAsStream(configFileLocation);
             InputStreamReader reader = new InputStreamReader(is);
             Gson gson = new Gson();
 
@@ -28,8 +33,8 @@ public class DefaultConfigDeciderFactory {
             }
 
         } catch (Exception ex) {
-            Logger.getLogger(DefaultConfigFactory.class.getName()).log(Level.FINEST, "properties file not found", ex);
-            Logger.getLogger(DefaultConfigFactory.class.getName()).log(Level.INFO, "properties file not found");
+            Logger.getLogger(DefaultConfigDeciderFactory.class.getName()).log(Level.FINEST, "properties file not found", ex);
+            Logger.getLogger(DefaultConfigDeciderFactory.class.getName()).log(Level.INFO, "properties file not found");
         }
         return list;
     }

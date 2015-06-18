@@ -3,7 +3,11 @@ package com.github.diluka.dynamic.web.staticizer.config;
 import javax.servlet.http.HttpServletRequest;
 import java.util.regex.Pattern;
 
-
+/**
+ * 默认配置Decider
+ * 判定方式和以前一样
+ * @author Diluka
+ */
 public class DefaultConfigDecider extends AbstractConfigDecider {
 
     public DefaultConfigDecider(IStaticizerConfig config) {

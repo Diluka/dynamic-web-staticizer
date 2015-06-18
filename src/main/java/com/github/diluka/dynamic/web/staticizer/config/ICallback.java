@@ -24,5 +24,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface ICallback {
 
+    /**
+     * 执行回调
+     * @param config
+     * @param request
+     */
     void call(IStaticizerConfig config, HttpServletRequest request);
 }
