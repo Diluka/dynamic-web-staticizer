@@ -53,3 +53,4 @@ $RECYCLE.BIN/
 *.lnk
 nb-configuration.xml
 *.iml
+.idea
